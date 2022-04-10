@@ -36,7 +36,8 @@ def whois(nom, prenom="", dna="", id_lifras=""):
 	dna = dt.strptime(form_lines[7].split('value="')[1].split('"')[0], "%d/%m/%Y").date()
 	id_lifras = form_lines[11].split('value="')[1].split('"')[0]
 	ice = result.text.split("ICE <b>")[1].split("</b>")[0]
-	aig = result.text.split(" AIG Call center ")[1].split("</b>")[0]
+	aig = result.text.split(" AIG Call center ")[1].split("<br>")[0]
+	police = result.text.split(" AIG Call center ")[1].split("<br>Police ")[1].split("</b>")[0]
 	text = result.text.split("fa-medkit")[1].split("</i>")[1].split("</div>")[0]
 	if "Medical situation in order !" in text:
 		medic_status = True
@@ -63,7 +64,7 @@ def whois(nom, prenom="", dna="", id_lifras=""):
 		brevets[brevet] = date
 
 	return {"status": True, "prenom": prenom, "nom":nom, "dna": dna, "id lifras": id_lifras, "statut ECG": ecg_status, "date ECG": ecg_date, 
-	"statut medic": medic_status, "date medic": medic_date, "ice": ice, "aig": aig, "brevets": brevets}
+	"statut medic": medic_status, "date medic": medic_date, "ice": ice, "aig": aig, "police":police, "brevets": brevets}
 
 
 if __name__ == "__main__":
