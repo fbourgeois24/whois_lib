@@ -2,29 +2,38 @@
 
 import requests
 from datetime import datetime as dt
+import logging as log
+
+log.basicConfig(level=10)
 
 
-def whois(nom, prenom, dna):
+def whois(nom, prenom="", dna="", id_lifras=""):
 	""" Récupérer les infos sur base du nom, prénom et date de naissance
 		
 	"""
 
+	if (prenom == "" or dna == "") and id_lifras == "":
+		raise ValueError("Il faut entrer le prénom et ou la date de naissance OU l'id lifras")
+
 	# Entête de la requête
 	headers = {'Content-Type': 'application/x-www-form-urlencoded'}
 	# Corps de la requête
-	data = {'Nom':nom.encode('ISO-8859-1'),'Prenom':prenom.encode('ISO-8859-1'), 'Naissance':dna, 'Action':'Search','ClubID':'202','LG':'FR'}
+	data = {'Nom':nom.encode('ISO-8859-1'),'Prenom':prenom.encode('ISO-8859-1'), 'Naissance':dna, "Nom1":nom.encode('ISO-8859-1'), 
+		"NrFederation2": id_lifras, 'Action':'Search','ClubID':'202','LG':'FR'}
 	
 	result = requests.post('https://www9.iclub.be/whois2.asp', headers=headers, data=data)
+	log.debug(result.text)
 
 	if "No member founded" in result.text:
 		return {"status": False, "result":"No member founded"}
 
 	form = result.text[result.text.index("<form"):result.text.index("</form>")]
 	form_lines = form.split("\n")
+	for seq, line in enumerate(form_lines):
+		log.debug(f"{seq}: {line}")
 	prenom = form_lines[2].split('value="')[1].split('"')[0]
 	nom = form_lines[4].split('value="')[1].split('"')[0]
-	dna_AAAAMMJJ = form_lines[7].split('value="')[1].split('"')[0]
-	dna = f"{dna[:2]}/{dna[3:5]}/{dna[-4:]}"
+	dna = dt.strptime(form_lines[7].split('value="')[1].split('"')[0], "%d/%m/%Y").date()
 	id_lifras = form_lines[11].split('value="')[1].split('"')[0]
 	ice = result.text.split("ICE <b>")[1].split("</b>")[0]
 	aig = result.text.split(" AIG Call center ")[1].split("</b>")[0]
@@ -50,7 +59,7 @@ def whois(nom, prenom, dna):
 		brevet = certification.replace('<td><i class="fa fa-certificate"></i> ', "").split("</td><td>")[0]
 		if "No certification founded !" in brevet:
 			break
-		date = certification.split("</td><td>")[1].split("</td></tr>")[0]
+		date = dt.strptime(certification.split("</td><td>")[1].split("</td></tr>")[0], "%d/%m/%Y").date()
 		brevets[brevet] = date
 
 	return {"status": True, "prenom": prenom, "nom":nom, "dna": dna, "id lifras": id_lifras, "statut ECG": ecg_status, "date ECG": ecg_date, 
@@ -58,4 +67,5 @@ def whois(nom, prenom, dna):
 
 
 if __name__ == "__main__":
-	print(whois("Bourgeois", "François", "24/06/1994"))
+	print(whois("Bourgeois", id_lifras="74065", ))
+	# print(whois("Bourgeois", "François", "24/06/1994"))
