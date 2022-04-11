@@ -30,11 +30,13 @@ def whois(nom, prenom="", dna="", id_lifras=""):
 	form = result.text[result.text.index("<form"):result.text.index("</form>")]
 	form_lines = form.split("\n")
 	# for seq, line in enumerate(form_lines):
-	# 	log.debug(f"{seq}: {line}")
+	# 	print(f"{seq}: {line}")
 	prenom = form_lines[2].split('value="')[1].split('"')[0]
 	nom = form_lines[4].split('value="')[1].split('"')[0]
 	dna = dt.strptime(form_lines[7].split('value="')[1].split('"')[0], "%d/%m/%Y").date()
-	id_lifras = int(form_lines[11].split('value="')[1].split('"')[0])
+	id_lifras = form_lines[11].split('value="')[1].split('"')[0]
+	if id_lifras != "":
+		id_lifras = int(id_lifras)
 	ice = result.text.split("ICE <b>")[1].split("</b>")[0]
 	aig = result.text.split(" AIG Call center ")[1].split("<br>")[0]
 	police = result.text.split(" AIG Call center ")[1].split("<br>Police ")[1].split("</b>")[0]
