@@ -63,8 +63,9 @@ def whois(nom, prenom="", dna="", id_lifras=""):
 		date = dt.strptime(certification.split("</td><td>")[1].split("</td></tr>")[0], "%d/%m/%Y").date()
 		brevets[brevet] = date
 
-	return {"status": True, "prenom": prenom, "nom":nom, "dna": dna, "id lifras": id_lifras, "statut ECG": ecg_status, "date ECG": ecg_date, 
-	"statut medic": medic_status, "date medic": medic_date, "ice": ice, "aig": aig, "police":police, "brevets": brevets}
+
+	return {"statut": True, "prenom": prenom, "nom":nom, "dna": dna, "id lifras": id_lifras, "statut ECG": ecg_status, "date ECG": ecg_date, 
+	"statut medic": medic_status, "date medic": medic_date, "ice": ice, "aig": aig, "police":police, "brevets": brevets, "en ordre": ecg_status and medic_status}
 
 
 if __name__ == "__main__":
