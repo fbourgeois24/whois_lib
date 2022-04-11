@@ -64,7 +64,7 @@ def whois(nom, prenom="", dna="", id_lifras=""):
 		brevets[brevet] = date
 
 
-	return {"statut": True, "prenom": prenom, "nom":nom, "dna": dna, "id lifras": id_lifras, "statut ECG": ecg_status, "date ECG": ecg_date, 
+	return {"statut": True, "prenom": prenom, "nom":nom, "dna": dna, "id lifras": id_lifras, "statut ecg": ecg_status, "date ecg": ecg_date, 
 	"statut medic": medic_status, "date medic": medic_date, "ice": ice, "aig": aig, "police":police, "brevets": brevets, "en ordre": ecg_status and medic_status}
 
 
