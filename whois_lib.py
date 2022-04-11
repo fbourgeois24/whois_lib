@@ -12,7 +12,7 @@ def whois(nom, prenom="", dna="", id_lifras=""):
 		
 	"""
 
-	if (prenom == "" or dna == "") and id_lifras == "":
+	if (prenom.replace(" ","") == "" or dna.replace(" ","") == "") and id_lifras.replace(" ","") == "":
 		raise ValueError("Il faut entrer le prénom et ou la date de naissance OU l'id lifras")
 
 	# Entête de la requête
