@@ -25,7 +25,7 @@ def whois(nom, prenom="", dna="", id_lifras=""):
 	# log.debug(result.text)
 
 	if "No member founded" in result.text:
-		return {"status": False, "result":"Membre inconnu"}
+		return {"statut": False, "result":"Membre inconnu"}
 
 	form = result.text[result.text.index("<form"):result.text.index("</form>")]
 	form_lines = form.split("\n")
