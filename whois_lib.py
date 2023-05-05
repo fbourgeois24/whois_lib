@@ -12,8 +12,8 @@ def whois(nom, prenom="", dna="", id_lifras=""):
 		
 	"""
 
-	if (prenom.replace(" ","") == "" or dna.replace(" ","") == "") and id_lifras.replace(" ","") == "":
-		raise ValueError("Il faut entrer le prénom et ou la date de naissance OU l'id lifras")
+	if (prenom.strip() == "" or dna.strip() == "") and id_lifras.strip() == "":
+		return {"statut": False, "result":"Il faut entrer le prénom et la date de naissance OU l'id lifras"}
 
 	# Entête de la requête
 	headers = {'Content-Type': 'application/x-www-form-urlencoded'}
@@ -35,8 +35,6 @@ def whois(nom, prenom="", dna="", id_lifras=""):
 	nom = form_lines[4].split('value="')[1].split('"')[0]
 	dna = dt.strptime(form_lines[7].split('value="')[1].split('"')[0], "%d/%m/%Y").date()
 	id_lifras = form_lines[11].split('value="')[1].split('"')[0]
-	if id_lifras != "":
-		id_lifras = int(id_lifras)
 	ice = result.text.split("ICE <b>")[1].split("</b>")[0]
 	aig = result.text.split(" AIG Call center ")[1].split("<br>")[0]
 	police = result.text.split(" AIG Call center ")[1].split("<br>Police ")[1].split("</b>")[0]
@@ -48,13 +46,6 @@ def whois(nom, prenom="", dna="", id_lifras=""):
 		medic_status = False
 		medic_date = None
 	
-	text = result.text.split("fa-heartbeat")[1].split("</i>")[1].split("</div>")[0]
-	if " ECG in order !" in text:
-		ecg_status = True
-		ecg_date = dt.strptime(text.split('Valid to ')[1], '%d/%m/%Y').date()
-	else:
-		ecg_status = False
-		ecg_date = None
 
 	certifications_table = result.text.split('<table class="table table-striped table-condensed">')[1].split("</table>")[0]
 	brevets = {}
@@ -66,8 +57,8 @@ def whois(nom, prenom="", dna="", id_lifras=""):
 		brevets[brevet] = date
 
 
-	return {"statut": True, "prenom": prenom, "nom":nom, "dna": dna, "id lifras": id_lifras, "statut ecg": ecg_status, "date ecg": ecg_date, 
-	"statut medic": medic_status, "date medic": medic_date, "ice": ice, "aig": aig, "police":police, "brevets": brevets, "en ordre": ecg_status and medic_status}
+	return {"statut": True, "prenom": prenom, "nom":nom, "dna": dna, "id lifras": id_lifras, "statut medic": medic_status, 
+		"date medic": medic_date, "ice": ice, "aig": aig, "police":police, "brevets": brevets, "en ordre": medic_status}
 
 
 if __name__ == "__main__":
